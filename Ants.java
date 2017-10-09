@@ -1,101 +1,74 @@
 import java.util.*;
-import java.math.*;
 
 public class Ants {
-    private int[] antArr;
-    private int[] compArr;
-    private int[] absArr;
-    private int length;
-    private int numAnts;
+    private int max, min, maxIndex, minIndex;
 
-    public Ants(int numA, int l) {
-    length = l;
-    numAnts = numA;
-    }
+    public void solve(int[] arr, int na, int l) {
 
-    public void solveIt(int[] arr) {
-        int min=length;
-        int minIndex=0;
-        int midMin=length;
-        int midMinIndex=0;
-        double mid = (double) length / 2 ;
-        double temp=length;
+        double middle = (double) l/ 2;      // get midpoint
 
-        antArr = new int[numAnts];
-        compArr = new int[numAnts];
-        absArr = new int[numAnts];
+        int[][] antArr = new int[na][2];    // antArr[][0:1] represents dist to each end of rod
 
-        for (int i=0; i<numAnts; i++) {
+        double[] midDist = new double[na];  // represents respective ants distance to middle
 
-            antArr[i] = arr[i];
+        int min=Integer.MAX_VALUE, max=0;
+        int maxInd=-1, minInd=-1;
 
-            compArr[i] = length - arr[i];
+        for (int i = 0; i < na; i++) {
 
-            temp = Math.abs(mid - arr[i]);
+            int ant = arr[i];       // copy value from parameter array
 
-            absArr[i] = (int) temp;
+            antArr[i][0] = ant;    // put in our own array
 
-            if (absArr[i] < midMin) {
-                midMin = absArr[i];
-                midMinIndex = i;
+            antArr[i][1] = l - ant; // complement distance
+
+            midDist[i] =  Math.abs(middle - ant);  // distance to midpoint
+
+            if (midDist[i] < min) {     // if this ant is closest to the middle
+                min = (int) midDist[i];     // set it as the  min
+                minInd = i;
+            } if (midDist[i] > max) {       // if this ant is furthest from middle
+                max = (int) midDist[i];     // set it as max
+                maxInd = i;
             }
-
-            if (compArr[i] < min) {
-                min = compArr[i];
-                minIndex = i;
-            }
-            if (antArr[i] < min) {
-                min = antArr[i];
-                minIndex = i;
-            }
-
-            //System.out.println(antArr[i] + " - " + compArr[i] + " - " + arr[i]);
-
         }
-        int slow = length - min;
 
-        int a,b;
+        // slow = take furthest ant from middle, get max distance from dist to each rod end
+        // since slow it will go toward the further end
+    int slow = antArr[maxInd][0] > antArr[maxInd][1] ? antArr[maxInd][0] : antArr[maxInd][1];
 
-        a = antArr[midMinIndex];
-        b = compArr[midMinIndex];
+        // fast = take closest ant to middle, get min distance from dist to each end rod
+        // since fast it will go toward the closer end
+    int fast = antArr[minInd][0] < antArr[minInd][1] ? antArr[minInd][0] : antArr[minInd][1];
 
+    //print answers
+    System.out.println(fast + " " + slow);
+    }//end solve
 
-        int fast = a<b ? a : b;
-
-
-
-        System.out.println(fast + " " + slow);
-
-
-
-    }
-
+    // main
     public static void main(String[] args) {
-        int n, num, l;
-        Scanner scan;
+        Scanner scan = new Scanner(System.in);
 
-        scan = new Scanner(System.in);
+        int numCases = scan.nextInt();  // number of test cases
+        scan.nextLine();
 
-        //System.out.println("input:");
-        n = scan.nextInt();
+        for (int j=0; j<numCases; j++) {
 
-        for (int i=0; i<n; i++) {
+            int length = scan.nextInt();        // length of rod
+            int numAnts = scan.nextInt();       // # ants
+            scan.nextLine();
 
+            int[] antArr = new int[numAnts];        // ant array
 
-            l = scan.nextInt();
-            num = scan.nextInt();
+            for (int i = 0; i < numAnts; i++) {
 
-            Ants a = new Ants(num,l);
+                int ant = scan.nextInt();
 
-            int[] arry = new int[num];
-
-            for (int j=0; j<num; j++){
-                arry[j] = scan.nextInt();
+                antArr[i] = ant;
             }
+                Ants ants = new Ants();
 
-            a.solveIt(arry);
+                    ants.solve(antArr, numAnts, length);
         }
-
     }
-
 }
